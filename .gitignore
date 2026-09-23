@@ -12,9 +12,14 @@ logs/
 **/logs/
 *.log
 
+# Local environment secrets
+**/.env
+!.env.example
+
 # Package manager files (optional — some teams keep lock files, skip this if you want them tracked)
 # package-lock.json
 
 # OS/editor junk
 .DS_Store
 Thumbs.db
+.env

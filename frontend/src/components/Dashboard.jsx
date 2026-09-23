@@ -479,7 +479,11 @@ export default function Dashboard() {
     }, 0);
   }, [youtubeChannel]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "50vh", color: "var(--muted)", gap: 10, fontSize: 15 }}>
+      <span style={{ animation: "chatbot-spin 1s linear infinite", display: "inline-block" }}>⚙️</span> Loading your dashboard...
+    </div>
+  );
   if (error) return <div className="error">{error}</div>;
 
   if (accounts.length === 0) {
@@ -489,89 +493,74 @@ export default function Dashboard() {
   return (
     <div>
       <div className="toolbar">
-        <div>
-          <h2 className="title" style={{ margin: 0 }}>
-            Dashboard
-          </h2>
+        <div className="toolbar-left">
+          <h2 className="title">Dashboard</h2>
+          <p className="subtitle" style={{ margin: 0 }}>Your social media overview</p>
         </div>
 
-        <div className="row" style={{ justifyContent: "end", width: "100%" }}>
-          {/* Left side — badges */}
-          <div className="row" style={{ gap: "8px" }}>
-            {igConnected && <span className="badge badgeOk">📸 Instagram</span>}
-            {fbConnected && <span className="badge badgeOk">📘 Facebook</span>}
-            {ytConnected && <span className="badge badgeOk">▶️ YouTube</span>}
-            {!hasMetaConnection && !ytConnected && (
-              <span className="badge">No platforms connected</span>
-            )}
-          </div>
+        <div className="toolbar-right">
+          {igConnected && <span className="badge badgeOk">📸 Instagram</span>}
+          {fbConnected && <span className="badge badgeOk">📘 Facebook</span>}
+          {ytConnected && <span className="badge badgeOk">▶️ YouTube</span>}
+          {!hasMetaConnection && !ytConnected && (
+            <span className="badge">No platforms connected</span>
+          )}
 
-          {/* Right side — buttons */}
-          <div className="row" style={{ gap: "8px" }}>
-            {hasMetaConnection ? (
-              <button
-                className="btn"
-                onClick={handleDisconnectMeta}
-                type="button"
-              >
-                Disconnect Meta
-              </button>
-            ) : (
-              <button
-                className="btn btnPrimary"
-                onClick={handleConnectMeta}
-                type="button"
-              >
-                Connect Meta
-              </button>
-            )}
-            {ytConnected ? (
-              <button
-                className="btn"
-                onClick={handleDisconnectYoutube}
-                type="button"
-              >
-                Disconnect YouTube
-              </button>
-            ) : (
-              <button
-                className="btn btnPrimary"
-                onClick={handleConnectYoutube}
-                type="button"
-              >
-                Connect YouTube
-              </button>
-            )}
-          </div>
+          {hasMetaConnection ? (
+            <button className="btn" onClick={handleDisconnectMeta} type="button">
+              Disconnect Meta
+            </button>
+          ) : (
+            <button className="btn btnPrimary" onClick={handleConnectMeta} type="button">
+              + Connect Meta
+            </button>
+          )}
+          {ytConnected ? (
+            <button className="btn" onClick={handleDisconnectYoutube} type="button">
+              Disconnect YouTube
+            </button>
+          ) : (
+            <button className="btn btnPrimary" onClick={handleConnectYoutube} type="button">
+              + Connect YouTube
+            </button>
+          )}
         </div>
       </div>
 
       {error ? <div className="error">{error}</div> : null}
 
-      {/* Combined KPIs - shows aggregate from all connected platforms */}
+      {/* Combined KPIs */}
       <div className="kpis">
         <div className="panel kpi">
+          <div className="kpiIcon">👥</div>
           <div className="kpiLabel">Total Followers</div>
           <div className="kpiValue">{animatedFollowers.toLocaleString()}</div>
+          <div className="kpiTrend">↑ All platforms</div>
         </div>
         <div className="panel kpi">
+          <div className="kpiIcon">👁️</div>
           <div className="kpiLabel">Total Reach</div>
           <div className="kpiValue">{animatedReach.toLocaleString()}</div>
+          <div className="kpiTrend">↑ Combined views</div>
         </div>
         <div className="panel kpi">
+          <div className="kpiIcon">💬</div>
           <div className="kpiLabel">Total Engagement</div>
           <div className="kpiValue">{animatedEngagement.toLocaleString()}</div>
+          <div className="kpiTrend">Likes + Comments</div>
         </div>
         <div className="panel kpi">
+          <div className="kpiIcon">📝</div>
           <div className="kpiLabel">Total Posts</div>
           <div className="kpiValue">{animatedPosts.toLocaleString()}</div>
+          <div className="kpiTrend">Across all platforms</div>
         </div>
       </div>
 
       <div className="grid2">
-        {/* Platform breakdown - shows individual platform status */}
+        {/* Platform breakdown */}
         <div className="panel section">
-          <h3 style={{ marginTop: 0 }}>Connected Platforms</h3>
+          <h3 className="section-title">🔗 Connected Platforms</h3>
           {accountSummary?.platforms?.length > 0 ? (
             <div style={{ display: "grid", gap: 12 }}>
               {accountSummary.platforms.map((platform) => (
@@ -722,7 +711,7 @@ export default function Dashboard() {
         </div>
 
         <div className="panel section">
-          <h3 style={{ marginTop: 0 }}>Trending Topics</h3>
+          <h3 className="section-title">🔥 Trending Topics</h3>
           {showInterestsSelection ? (
             <InterestsSelection
               onComplete={handleInterestsComplete}

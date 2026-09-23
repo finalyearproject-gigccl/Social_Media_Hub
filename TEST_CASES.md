@@ -77,3 +77,14 @@ This document contains test cases for the Social Media Dashboard application cov
 | TC-30 | Meta OAuth cancelled                 | 1. Click "Connect Meta"<br>2. Close popup without completing                | Stay on current page, no error message  |
 
 ---
+
+## 7. AI Post Drafting
+
+| ID    | Test Case               | Steps                                                                                         | Expected Result                                                              |
+| ----- | ----------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| TC-31 | Generate AI draft       | 1. Open Publish<br>2. Describe a post<br>3. Choose tone and length<br>4. Click Generate Draft | AI draft appears without publishing anything                                 |
+| TC-32 | Use and edit AI draft   | 1. Generate a draft<br>2. Click Use This Draft<br>3. Edit the content textarea                | Draft is copied into the normal post content field and remains editable      |
+| TC-33 | Regenerate AI draft     | 1. Generate a draft<br>2. Click Regenerate                                                    | A new draft replaces the previous preview                                    |
+| TC-34 | Empty AI description    | 1. Leave the AI description empty<br>2. Click Generate Draft                                  | Validation message appears and no AI request is sent                         |
+| TC-35 | AI key not configured   | 1. Remove OPENAI_API_KEY<br>2. Submit a valid description                                     | Clear configuration error appears; existing manual publishing remains usable |
+| TC-36 | Publish generated draft | 1. Generate a draft<br>2. Use This Draft<br>3. Select a platform<br>4. Click Publish Now      | Existing publishing APIs receive the edited generated content                |

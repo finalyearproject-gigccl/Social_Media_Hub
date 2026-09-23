@@ -9,7 +9,66 @@ import Placeholder from "./components/Placeholder.jsx";
 import DetailedAnalytics from "./components/DetailedAnalytics.jsx";
 import Inbox from "./components/Inbox.jsx";
 import Publish from "./components/Publish.jsx";
+import Chatbot from "./components/Chatbot.jsx";
 import config from "../config/config.json";
+
+const PAGE_META = {
+  dashboard:           { icon: "▣", label: "Dashboard" },
+  accounts:            { icon: "⊞", label: "Connected Accounts" },
+  publish:             { icon: "✦", label: "Publish" },
+  inbox:               { icon: "⊠", label: "Inbox" },
+  "detailed-analytics":{ icon: "⟁", label: "Analytics" },
+  calendar:            { icon: "📅", label: "Calendar" },
+  library:             { icon: "📚", label: "Library" },
+  settings:            { icon: "⚙️", label: "Settings" },
+};
+
+function initials(name) {
+  return String(name || "U").split(" ").map(s => s[0]).filter(Boolean).join("").toUpperCase().slice(0, 2);
+}
+
+function TopBar({ activeView, user, onLogout, theme, toggleTheme }) {
+  const meta = PAGE_META[activeView] || { icon: "▣", label: activeView };
+  return (
+    <header className="topbar">
+      <div className="topbar-left">
+        <span className="topbar-page-icon">{meta.icon}</span>
+        <h1 className="topbar-title">{meta.label}</h1>
+      </div>
+      <div className="topbar-right">
+        <button
+          className="btn btnSecondary"
+          onClick={toggleTheme}
+          type="button"
+          id="topbar-theme-toggle"
+          title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          style={{ fontSize: 14, padding: "7px 12px", display: "flex", alignItems: "center", gap: 6 }}
+        >
+          <span>{theme === "light" ? "🌙" : "☀️"}</span>
+          <span style={{ fontSize: 12, fontWeight: 500 }}>{theme === "light" ? "Dark" : "Light"}</span>
+        </button>
+
+        <div className="topbar-user">
+          <div className="topbar-avatar">{initials(user?.name)}</div>
+          <div className="topbar-user-info">
+            <div className="topbar-user-name">{user?.name}</div>
+            <div className="topbar-user-role">Member</div>
+          </div>
+        </div>
+
+        <button
+          className="btn btnDanger"
+          onClick={onLogout}
+          type="button"
+          id="topbar-logout-btn"
+          style={{ fontSize: 13, padding: "7px 14px" }}
+        >
+          ↩ Logout
+        </button>
+      </div>
+    </header>
+  );
+}
 
 const LS_SESSION = "app_session_user";
 const LS_THEME = "app_theme";
@@ -154,18 +213,20 @@ export default function App() {
   let content = null;
 
   if (!hasConnectedAccounts && loadingAccounts) {
-    content = <p>Loading...</p>;
+    content = (
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"60vh", color:"var(--muted)", gap:10, fontSize:15 }}>
+        <span style={{ display:"inline-block", animation:"chatbot-spin 1.2s linear infinite" }}>⚙️</span>
+        Loading...
+      </div>
+    );
   } else if (activeView === "dashboard") {
-    // Show onboarding inside dashboard if no accounts connected
     content = hasConnectedAccounts ? <Dashboard /> : <Onboarding />;
   } else if (activeView === "accounts") content = <Accounts />;
   else if (activeView === "publish") content = <Publish />;
   else if (activeView === "inbox") content = <Inbox />;
-  else if (activeView === "calendar")
-    content = <Placeholder title="Calendar" />;
+  else if (activeView === "calendar") content = <Placeholder title="Calendar" />;
   else if (activeView === "library") content = <Placeholder title="Library" />;
-  else if (activeView === "settings")
-    content = <Placeholder title="Settings" />;
+  else if (activeView === "settings") content = <Placeholder title="Settings" />;
   else if (activeView === "detailed-analytics") content = <DetailedAnalytics />;
   else content = <Placeholder title="Page" />;
 
@@ -179,7 +240,11 @@ export default function App() {
         theme={theme}
         toggleTheme={toggleTheme}
       />
-      <main className="content">{content}</main>
+      <main className="content">
+        <TopBar activeView={activeView} user={user} onLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
+        <div className="page-body">{content}</div>
+      </main>
+      <Chatbot />
     </div>
   );
 }
