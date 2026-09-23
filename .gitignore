@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables (secrets)
+.env
+backend/.env
+**/.env
+
+# Build output
+frontend/build/
+**/build/
+dist/
+
+# Logs
+logs/
+**/logs/
+*.log
+
+# Package manager files (optional — some teams keep lock files, skip this if you want them tracked)
+# package-lock.json
+
+# OS/editor junk
+.DS_Store
+Thumbs.db

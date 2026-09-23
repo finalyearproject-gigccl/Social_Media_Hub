@@ -1,0 +1,113 @@
+# Deployment and Workflow Guide
+
+## Project Overview
+
+This repository contains a two-part social media analytics application:
+- `backend/`: Node.js + Express API server with PostgreSQL data storage and scheduler jobs
+- `frontend/`: React application built with Vite
+
+The frontend communicates with the backend using the API base URL configured in `frontend/config/config.json`.
+
+## Backend Deployment
+
+### Prerequisites
+- Node.js (recommended 18+)
+- PostgreSQL database
+- Valid API credentials for Instagram/Meta, YouTube, and Discord
+
+### Important environment variables
+The backend uses `backend/.env` for configuration.
+Key variables:
+- `PORT` — backend server port, default `3001`
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` — PostgreSQL connection details
+- `JWT_SECRET` — secret used to sign authentication tokens
+- `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET`, `INSTAGRAM_API_VERSION`
+- `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`
+- `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`
+- `GNEWS_API_KEY` — optional news API key
+- `SCHEDULER_ENABLED` — enable analytics scheduler service
+- `SCHEDULER_INTERVAL` — cron interval for analytics sync
+
+### Setup and start backend
+1. Open a terminal in `backend/`
+2. Install dependencies:
+   - `npm install`
+3. Create or update `.env` with your deployment values.
+4. Initialize the database schema:
+   - `npm run init-db`
+5. Start the backend server:
+   - Development: `npm run dev`
+   - Production: `npm start`
+
+### Scheduler service
+The backend includes a separate analytics scheduler process.
+- Start manually with: `npm run start:scheduler`
+- Control it via `.env`:
+  - `SCHEDULER_ENABLED=true`
+  - `SCHEDULER_INTERVAL=0 */6 * * *` (example every 6 hours)
+
+### Backend health and manual sync
+- Health check: `GET /health`
+- Manual analytics sync: `POST /api/admin/sync-analytics`
+
+## Frontend Deployment
+
+### Configuration
+The frontend uses `frontend/config/config.json` to define the backend URL:
+- `REACT_APP_API_BASE` should match the backend URL and port
+- Default in this repo: `http://localhost:3001`
+
+### Setup and run frontend
+1. Open a terminal in `frontend/`
+2. Install dependencies:
+   - `npm install`
+3. Start the development server:
+   - `npm run dev`
+4. Build production assets:
+   - `npm run build`
+5. Preview production build:
+   - `npm run preview`
+
+### Production notes
+- Serve the built `dist/` output as static files in your chosen host
+- Ensure `REACT_APP_API_BASE` points to the deployed backend endpoint
+- Use secure storage for secrets and do not commit `.env` values
+
+## Deployment Workflow
+
+### Local developer workflow
+1. Configure backend env values in `backend/.env`
+2. Install backend dependencies and initialize database
+3. Start backend server
+4. Install frontend dependencies
+5. Confirm `frontend/config/config.json` points to the backend URL
+6. Start frontend dev server
+7. Open the app in the browser and verify backend connectivity
+
+### Typical release flow
+1. Verify backend environment variables are set for production
+2. Run backend tests or smoke checks against `/health`
+3. Build frontend assets: `npm run build`
+4. Deploy frontend static files to the hosting service
+5. Deploy backend server and ensure the API base URL is exposed
+6. Update frontend configuration to use the production backend URL
+7. Start scheduler if periodic analytics sync is required
+8. Verify login, account connections, and analytics workflows
+
+## Notes and compatibility
+- The backend is an Express API server that uses PostgreSQL and JWT auth
+- The frontend is a Vite + React SPA that relies on the backend for authenticated API calls
+- The app expects a consistent API base URL between frontend and backend
+- If the backend port changes, update `frontend/config/config.json` accordingly
+
+## Recommended files to keep reviewed
+- `backend/package.json`
+- `backend/server.js`
+- `backend/config/database.js`
+- `backend/scripts/init-db.js`
+- `frontend/package.json`
+- `frontend/config/config.json`
+
+---
+
+This guide is intended for both local development and production deployment planning.
